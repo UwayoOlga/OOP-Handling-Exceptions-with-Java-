@@ -1,0 +1,306 @@
+import java.util.Scanner; // Import the Scanner class to get user input
+import java.sql.SQLException; // Import the SQLException class to handle database access errors
+import java.util.InputMismatchException; // Import InputMismatchException to handle invalid user inputs
+import java.io.IOException; // Import IOException for handling input-output related exceptions
+import java.io.EOFException; // Import EOFException for handling end-of-file errors
+import java.io.FileNotFoundException; // Import FileNotFoundException to handle cases when a file is not found
+import java.nio.file.Files; // Import Files class to perform file operations
+import java.nio.file.Paths; // Import Paths class to locate files or directories
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Initialize the scanner for user input
+        ShoppingCart cart = new ShoppingCart(); // Create a new shopping cart instance
+
+        // Create some sample products
+        Product product1 = new Product(1, "Laptop", 999.99, 10);
+        Product product2 = new Product(2, "Smartphone", 499.99, 15);
+        Product product3 = new Product(3, "Headphones", 89.99, 25);
+
+        // Create helper instances
+        DatabaseHelper dbHelper = new DatabaseHelper(); // Initialize the database helper
+        FileHelper fileHelper = new FileHelper(); // Initialize the file helper
+
+        // Main Menu
+        System.out.println("Welcome to the Shopping Cart System!");
+        while (true) {
+            System.out.println("\n1. View Cart");
+            System.out.println("2. Add Item to Cart");
+            System.out.println("3. Remove Item from Cart");
+            System.out.println("4. Checkout");
+            System.out.println("5. Simulate Database Error");
+            System.out.println("6. Simulate File Error");
+            System.out.println("7. Simulate EOF Error");
+            System.out.println("8. Simulate Class Not Found Error");
+            System.out.println("9. Exit");
+            System.out.print("Choose an option: ");
+
+            int option = 0;
+            boolean validOption = false;
+
+            // Handle invalid menu options
+            while (!validOption) {
+                try {
+                    option = scanner.nextInt(); // Get user input for menu selection
+                    validOption = true; // Exit loop if input is valid
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                    scanner.nextLine(); // Clear the invalid input
+                }
+            }
+
+            switch (option) {
+                case 1:
+                    cart.viewCart(); // Display the contents of the cart
+                    break;
+
+                case 2:
+                    int id = 0;
+                    int quantity = 0;
+                    boolean validInput = false;
+
+                    while (!validInput) {
+                        try {
+                            System.out.println("Enter product ID to add:");
+                            System.out.println("1: Laptop - $" + product1.getPrice() + " - Available: " + product1.getQuantity());
+                            System.out.println("2: Smartphone - $" + product2.getPrice() + " - Available: " + product2.getQuantity());
+                            System.out.println("3: Headphones - $" + product3.getPrice() + " - Available: " + product3.getQuantity());
+                            System.out.print("Choose product ID (1, 2, or 3): ");
+                            id = scanner.nextInt(); // Get product ID
+                            System.out.print("Enter quantity: ");
+                            quantity = scanner.nextInt(); // Get quantity to add
+                            validInput = true;
+
+                            if (id == 1) {
+                                cart.addToCart(product1, quantity); // Add laptop to cart
+                            } else if (id == 2) {
+                                cart.addToCart(product2, quantity); // Add smartphone to cart
+                            } else if (id == 3) {
+                                cart.addToCart(product3, quantity); // Add headphones to cart
+                            } else {
+                                System.out.println("Invalid product ID. Please choose 1, 2, or 3.");
+                                validInput = false; // Retry if invalid product ID
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid input. Please enter valid numbers for product ID and quantity.");
+                            scanner.nextLine(); // Clear the invalid input
+                        }
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter product ID to remove (1: Laptop, 2: Smartphone, 3: Headphones): ");
+                    int removeId = scanner.nextInt();
+                    if (removeId == 1) {
+                        cart.removeFromCart(product1); // Remove laptop from cart
+                    } else if (removeId == 2) {
+                        cart.removeFromCart(product2); // Remove smartphone from cart
+                    } else if (removeId == 3) {
+                        cart.removeFromCart(product3); // Remove headphones from cart
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Checkout: Total Amount: $" + cart.calculateTotal()); // Display total amount
+                    cart.clearCart(); // Clear the cart after checkout
+                    break;
+
+                case 5:
+                    try {
+                        dbHelper.simulateDatabaseError(); // Simulate a database error
+                    } catch (SQLException e) {
+                        System.out.println("Database Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 6:
+                    fileHelper.loadCartFromFile("non_existent_file.txt"); // Simulate file error
+                    break;
+
+                case 7:
+                    try {
+                        fileHelper.simulateEOFError(); // Simulate EOF error
+                    } catch (EOFException e) {
+                        System.out.println("EOF Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 8:
+                    try {
+                        dbHelper.simulateClassNotFoundError(); // Simulate ClassNotFound error
+                    } catch (ClassNotFoundException e) {
+                        System.out.println("Class Not Found Error: " + e.getMessage());
+                    }
+                    break;
+
+                case 9:
+                    System.out.println("Exiting the system. Goodbye!");
+                    scanner.close(); // Close the scanner
+                    return;
+
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+}
+
+public class FileHelper {
+    public void loadCartFromFile(String fileName) {
+        try {
+            Files.readAllLines(Paths.get(fileName)); // Attempt to read the file
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: File not found: " + fileName); // Handle file not found
+        } catch (IOException e) {
+            System.out.println("Error: Problem reading the file: " + fileName); // Handle general file reading errors
+        }
+    }
+
+    public void simulateEOFError() throws EOFException {
+        throw new EOFException("Unexpected end of file reached."); // Simulate EOF exception
+    }
+}
+
+public class DatabaseHelper {
+    public void simulateDatabaseError() throws SQLException {
+        throw new SQLException("Database connection failed. Invalid database URL."); // Simulate database error
+    }
+
+    public void simulateClassCastError(Object obj) {
+        if (!(obj instanceof Product)) { // Check if the object is not a Product instance
+            throw new ClassCastException("Cannot cast " + obj.getClass().getSimpleName() + " to Product.");
+        }
+        Product product = (Product) obj; // Safe cast if the check above passes
+    }
+
+    public void simulateClassNotFoundError() throws ClassNotFoundException {
+        throw new ClassNotFoundException("Class not found during runtime."); // Simulate ClassNotFoundException
+    }
+}
+
+public class Product {
+    private int id; // Product ID
+    private String name; // Product name
+    private double price; // Product price
+    private int quantity; // Available stock
+
+    public Product(int id, String name, double price, int quantity) {
+        this.id = id; // Initialize product ID
+        this.name = name; // Initialize product name
+        this.price = price; // Initialize product price
+        this.quantity = quantity; // Initialize stock quantity
+    }
+
+    public int getId() {
+        return id; // Return product ID
+    }
+
+    public String getName() {
+        return name; // Return product name
+    }
+
+    public double getPrice() {
+        return price; // Return product price
+    }
+
+    public int getQuantity() {
+        return quantity; // Return available stock
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity; // Update stock quantity
+    }
+
+    public void updateStock(int quantity) {
+        this.quantity -= quantity; // Deduct stock based on purchase
+    }
+
+    public void restock(int quantity) {
+        this.quantity += quantity; // Add stock for restocking
+    }
+
+    public String getDetails() {
+        return String.format("Product Name: %s, Price: $%.2f, Available Quantity: %d", name, price, quantity); // Display product details
+    }
+}
+
+import java.util.ArrayList; // Import ArrayList class for maintaining a dynamic list of items
+import java.util.List; // Import List interface for representing collections
+
+public class ShoppingCart {
+    private List<CartItem> cartItems; // List to store cart items
+
+    public ShoppingCart() {
+        this.cartItems = new ArrayList<>(); // Initialize the cart as an empty list
+    }
+
+    public void addToCart(Product product, int quantity) {
+        try {
+            if (product == null) {
+                throw new IllegalArgumentException("Product cannot be null"); // Handle null products
+            }
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity must be greater than zero"); // Handle invalid quantities
+            }
+            product.updateStock(quantity); // Deduct stock
+            cartItems.add(new CartItem(product, quantity)); // Add product to the cart
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error adding to cart: " + e.getMessage()); // Handle invalid inputs
+        }
+    }
+
+    public void removeFromCart(Product product) {
+        cartItems.removeIf(item -> item.getProduct().equals(product)); // Remove product from cart
+    }
+
+    public void viewCart() {
+        if (cartItems.isEmpty()) {
+            System.out.println("Your cart is empty."); // Inform user if the cart is empty
+        } else {
+            for (CartItem item : cartItems) {
+                System.out.println(item.getItemDetails()); // Display details of each cart item
+            }
+        }
+    }
+
+    public double calculateTotal() {
+        double total = 0;
+        for (CartItem item : cartItems) {
+            total += item.getItemTotal(); // Calculate total cost of items in the cart
+        }
+        return total;
+    }
+
+    public void clearCart() {
+        cartItems.clear(); // Remove all items from the cart
+    }
+}
+
+public class CartItem {
+    private Product product; // Product in the cart
+    private int quantity; // Quantity of the product in the cart
+
+    public CartItem(Product product, int quantity) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null"); // Handle null products
+        }
+        this.product = product; // Initialize product
+        this.quantity = quantity; // Initialize quantity
+    }
+
+    public Product getProduct() {
+        return product; // Return the product
+    }
+
+    public int getQuantity() {
+        return quantity; // Return the quantity
+    }
+
+    public double getItemTotal() {
+        return product.getPrice() * quantity; // Calculate total cost for this item
+    }
+
+    public String getItemDetails() {
+        return product.getDetails() + ", Quantity: " + quantity + ", Total: $" + getItemTotal(); // Display cart item details
+    }
+}
