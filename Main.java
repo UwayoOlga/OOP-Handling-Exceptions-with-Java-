@@ -2,7 +2,7 @@ import java.util.Scanner; // import the Scanner class which is used to get user 
 import java.sql.SQLException; // import the SQLException class that shall signal that an error has occurred while accessing a database.
 import java.util.InputMismatchException;// import InputMismatchException class for handling situations where user
 // input doesn't match the expected data type.
-import java.io.IOException;
+import java.io.IOException; // import java.io.IOException to indicate that an error occurred during some kind of Input/Output (I/O) operation.
 
 public class Main {
     public static void main(String[] args) {
