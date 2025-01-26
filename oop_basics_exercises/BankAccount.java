@@ -17,7 +17,10 @@ public class BankAccount {
     }
 
     public void deposit(double amount) {
+       if(amount > 1000){
+
         balance += amount;
+       }
     }
 
     public void withdraw(double amount) {
