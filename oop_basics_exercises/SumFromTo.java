@@ -1,6 +1,6 @@
 /*Write a function named "sumFromTo" that takes two integer arguments, 
 "first" and "last", and returns the sum of all integers between them inclusive. */
-
+package oop_basics_exercises;
 public class SumFromTo {
     public static int sumFromTo(int first, int last) {
         int sum = 0;

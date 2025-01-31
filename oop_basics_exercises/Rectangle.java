@@ -1,5 +1,6 @@
 /* Write a Java program to create a class called "Rectangle" with width and height attributes.
  Include methods to initialize attributes, calculate the area and perimeter, and display results */
+ package oop_basics_exercises;
  public class Rectangle {
     private double width;
     private double height;
