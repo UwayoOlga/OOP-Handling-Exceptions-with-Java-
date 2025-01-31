@@ -1,5 +1,5 @@
 
-class Student {
+public class Student {
     private String name;
     private int age; 
 
@@ -22,14 +22,4 @@ class Student {
     }
 }
  
-public class Main {
-    public static void main(String[] args) { 
-        Student student = new Student();
  
-        student.setName("Olga Uwayo");
-        student.setAge(21);
- 
-        System.out.println("Student Name: " + student.getName());
-        System.out.println("Student Age: " + student.getAge());
-    }
-}
