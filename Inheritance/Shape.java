@@ -1,6 +1,6 @@
 package Inheritance;
  
-class Shape {
+public class Shape {
     private String color;
 
     public Shape(String color) {
@@ -86,23 +86,5 @@ class Rectangle extends Shape {
     @Override
     public String toString() {
         return "Rectangle (" + super.toString() + ", Length: " + length + ", Width: " + width + ")";
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Circle myCircle = new Circle("red", 5);
-        Rectangle myRectangle = new Rectangle("blue", 10, 5);
-
-        System.out.println(myCircle);        
-        System.out.println("Circle Area: " + myCircle.getArea());  
-
-        System.out.println(myRectangle);     
-        System.out.println("Rectangle Area: " + myRectangle.getArea());  
-
-        Shape aShape = myCircle;   
-        System.out.println(aShape.getColor()); 
-        System.out.println(aShape.getArea());    
-
     }
 }
